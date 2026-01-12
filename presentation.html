@@ -999,12 +999,27 @@
       const slides = document.querySelectorAll('.slide');
       for (let i = 0; i < 3 && i < slides.length; i++) {
         slides[i].style.background = `linear-gradient(135deg, ${theme.start} 0%, ${theme.end} 100%)`;
+        // Preserve the display property - don't override it
+        if (i === 0) {
+          slides[i].style.display = 'flex'; // First slide is active by default
+        }
       }
     }
     
-    // Initialize on page load
+    // Initialize on page load - wait for DOM
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCoinsDisplay();
+      applyTheme(currentTheme);
+    });
+    
+    // Also run immediately in case DOM is already loaded
     updateCoinsDisplay();
-    applyTheme(currentTheme);
+    if (document.readyState === 'loading') {
+      // DOM not ready yet
+    } else {
+      // DOM is ready
+      applyTheme(currentTheme);
+    }
 
     
     let currentSlide = 0;
