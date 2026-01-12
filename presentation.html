@@ -312,75 +312,9 @@
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">🌙 Dark</button>
-  <div style="position: fixed; top: 20px; right: 180px; z-index: 1001; display: flex; gap: 10px;">
-    <div style="background: rgba(255, 215, 0, 0.3); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 20px; border: 2px solid rgba(255, 215, 0, 0.5); font-weight: bold; font-size: 1.2em;">💰 <span id="coin-display">0</span></div>
-    <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.3);" onclick="openShop()">🛒 Shop</button>
-  </div>
-  
   <div class="loading-overlay" id="loading-overlay">
     <div class="spinner"></div>
     <div class="loading-text">🧠 AI is thinking...</div>
-  </div>
-
-  <!-- Theme Shop Modal -->
-  <div id="shop-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;">
-    <div style="background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 20px; padding: 40px; max-width: 700px; width: 90%; border: 2px solid var(--card-border); max-height: 80vh; overflow-y: auto;">
-      <h2 style="font-size: 2em; margin-bottom: 10px;">🛒 Theme Shop</h2>
-      <p style="margin-bottom: 30px; opacity: 0.8;">💰 Your Coins: <span id="shop-coin-display" style="font-weight: bold; color: #FFD700;">0</span></p>
-      
-      <div id="shop-items" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-        <!-- Default Theme -->
-        <div class="shop-item" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.3);" onclick="selectTheme('default')">
-          <div style="font-size: 2em; margin-bottom: 10px;">🌌</div>
-          <h3>Default Purple</h3>
-          <p style="margin: 10px 0; font-size: 0.9em;">FREE</p>
-          <button style="background: rgba(255, 255, 255, 0.3); border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold;">✓ Owned</button>
-        </div>
-        
-        <!-- Ocean Theme -->
-        <div class="shop-item" data-theme="ocean" data-price="50" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.3);">
-          <div style="font-size: 2em; margin-bottom: 10px;">🌊</div>
-          <h3>Ocean Blue</h3>
-          <p style="margin: 10px 0; font-size: 0.9em;">💰 50 coins</p>
-          <button class="theme-buy-btn" onclick="buyTheme('ocean', 50)" style="background: rgba(255, 215, 0, 0.8); border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold;">Buy</button>
-        </div>
-        
-        <!-- Sunset Theme -->
-        <div class="shop-item" data-theme="sunset" data-price="50" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.3);">
-          <div style="font-size: 2em; margin-bottom: 10px;">🌅</div>
-          <h3>Sunset Orange</h3>
-          <p style="margin: 10px 0; font-size: 0.9em;">💰 50 coins</p>
-          <button class="theme-buy-btn" onclick="buyTheme('sunset', 50)" style="background: rgba(255, 215, 0, 0.8); border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold;">Buy</button>
-        </div>
-        
-        <!-- Forest Theme -->
-        <div class="shop-item" data-theme="forest" data-price="75" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.3);">
-          <div style="font-size: 2em; margin-bottom: 10px;">🌲</div>
-          <h3>Forest Green</h3>
-          <p style="margin: 10px 0; font-size: 0.9em;">💰 75 coins</p>
-          <button class="theme-buy-btn" onclick="buyTheme('forest', 75)" style="background: rgba(255, 215, 0, 0.8); border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold;">Buy</button>
-        </div>
-        
-        <!-- Rose Theme -->
-        <div class="shop-item" data-theme="rose" data-price="75" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.3);">
-          <div style="font-size: 2em; margin-bottom: 10px;">🌹</div>
-          <h3>Rose Pink</h3>
-          <p style="margin: 10px 0; font-size: 0.9em;">💰 75 coins</p>
-          <button class="theme-buy-btn" onclick="buyTheme('rose', 75)" style="background: rgba(255, 215, 0, 0.8); border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold;">Buy</button>
-        </div>
-        
-        <!-- Galaxy Theme -->
-        <div class="shop-item" data-theme="galaxy" data-price="100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.3);">
-          <div style="font-size: 2em; margin-bottom: 10px;">🌌</div>
-          <h3>Galaxy Purple</h3>
-          <p style="margin: 10px 0; font-size: 0.9em;">💰 100 coins</p>
-          <button class="theme-buy-btn" onclick="buyTheme('galaxy', 100)" style="background: rgba(255, 215, 0, 0.8); border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold;">Buy</button>
-        </div>
-      </div>
-      
-      <button onclick="closeShop()" style="margin-top: 30px; background: rgba(255, 255, 255, 0.2); color: var(--text-primary); border: 2px solid var(--card-border); padding: 12px 30px; border-radius: 12px; cursor: pointer; font-size: 1em; font-weight: bold;">Close Shop</button>
-    </div>
   </div>
 
   <!-- Slide 1: Homepage -->
@@ -889,153 +823,40 @@
       document.getElementById('loading-overlay').classList.remove('active');
     }
     
-    // Coins and Shop System
-    let userCoins = parseInt(localStorage.getItem('userCoins')) || 0;
-    let ownedThemes = JSON.parse(localStorage.getItem('ownedThemes')) || ['default'];
-    let currentTheme = localStorage.getItem('currentTheme') || 'default';
-    
-    // Theme color definitions
-    const themes = {
-      default: { start: '#667eea', end: '#764ba2' },
-      ocean: { start: '#2E3192', end: '#1BFFFF' },
-      sunset: { start: '#FF512F', end: '#F09819' },
-      forest: { start: '#134E5E', end: '#71B280' },
-      rose: { start: '#F857A6', end: '#FF5858' },
-      galaxy: { start: '#5f2c82', end: '#49a09d' }
-    };
-    
-    // Update coins display
-    function updateCoinsDisplay() {
-      document.getElementById('coin-display').textContent = userCoins;
-      document.getElementById('shop-coin-display').textContent = userCoins;
-      localStorage.setItem('userCoins', userCoins);
-    }
-    
-    // Earn coins (called when user gets an answer)
-    function earnCoins(amount) {
-      userCoins += amount;
-      updateCoinsDisplay();
-      
-      // Show coin notification
-      const notification = document.createElement('div');
-      notification.textContent = `+${amount} \ud83d\udcb0`;
-      notification.style.cssText = 'position: fixed; top: 80px; right: 20px; background: rgba(255, 215, 0, 0.9); padding: 15px 25px; border-radius: 15px; font-weight: bold; font-size: 1.2em; z-index: 2001; animation: slideIn 0.5s;';
-      document.body.appendChild(notification);
-      setTimeout(() => notification.remove(), 2000);
-    }
-    
-    // Open shop
-    function openShop() {
-      document.getElementById('shop-modal').style.display = 'flex';
-      updateCoinsDisplay();
-      updateShopItems();
-    }
-    
-    // Close shop
-    function closeShop() {
-      document.getElementById('shop-modal').style.display = 'none';
-    }
-    
-    // Update shop items to show owned/buy buttons
-    function updateShopItems() {
-      const shopItems = document.querySelectorAll('.shop-item');
-      shopItems.forEach(item => {
-        const themeId = item.dataset.theme;
-        const price = parseInt(item.dataset.price || 0);
-        const buyBtn = item.querySelector('.theme-buy-btn, button');
-        
-        if (!themeId || themeId === 'default') return; // Skip default
-        
-        if (ownedThemes.includes(themeId)) {
-          buyBtn.textContent = currentTheme === themeId ? '\u2713 Active' : 'Select';
-          buyBtn.style.background = currentTheme === themeId ? 'rgba(100, 255, 100, 0.8)' : 'rgba(255, 255, 255, 0.3)';
-          buyBtn.onclick = () => selectTheme(themeId);
-        } else {
-          buyBtn.textContent = 'Buy';
-          buyBtn.style.background = 'rgba(255, 215, 0, 0.8)';
-          buyBtn.onclick = () => buyTheme(themeId, price);
-        }
-        
-        // Update preview background
-        if (themes[themeId]) {
-          item.style.background = `linear-gradient(135deg, ${themes[themeId].start} 0%, ${themes[themeId].end} 100%)`;
-        }
-      });
-    }
-    
-    // Buy theme
-    function buyTheme(themeId, price) {
-      if (userCoins >= price) {
-        userCoins -= price;
-        ownedThemes.push(themeId);
-        localStorage.setItem('ownedThemes', JSON.stringify(ownedThemes));
-        updateCoinsDisplay();
-        updateShopItems();
-        alert(`\u2713 ${themeId.charAt(0).toUpperCase() + themeId.slice(1)} theme purchased!`);
-        selectTheme(themeId);
-      } else {
-        alert(`\u274c Not enough coins! You need ${price - userCoins} more coins.`);
-      }
-    }
-    
-    // Select theme
-    function selectTheme(themeId) {
-      if (!ownedThemes.includes(themeId)) {
-        alert('\u274c You don\\'t own this theme yet!');
-        return;
-      }
-      
-      currentTheme = themeId;
-      localStorage.setItem('currentTheme', currentTheme);
-      applyTheme(themeId);
-      updateShopItems();
-    }
-    
-    // Apply theme to slides 1, 2, 3
-    function applyTheme(themeId) {
-      const theme = themes[themeId];
-      if (!theme) return;
-      
-      const slides = document.querySelectorAll('.slide');
-      for (let i = 0; i < 3 && i < slides.length; i++) {
-        slides[i].style.background = `linear-gradient(135deg, ${theme.start} 0%, ${theme.end} 100%)`;
-        // Preserve the display property - don't override it
-        if (i === 0) {
-          slides[i].style.display = 'flex'; // First slide is active by default
-        }
-      }
-    }
-    
-    // Initialize on page load - wait for DOM
-    document.addEventListener('DOMContentLoaded', function() {
-      updateCoinsDisplay();
-      applyTheme(currentTheme);
-      // Initialize slides after DOM is ready
-      initializeSlides();
-    });
-    
-    // Also run immediately in case DOM is already loaded
-    updateCoinsDisplay();
-    if (document.readyState === 'loading') {
-      // DOM not ready yet
-    } else {
-      // DOM is ready
-      applyTheme(currentTheme);
-      initializeSlides();
-    }
-
-    
     let currentSlide = 0;
-    let slides;
-    let totalSlides;
+    let slides = [];
+    let totalSlides = 0;
     let isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+    let slidesInitialized = false;
     
-    // Initialize slides
+    // Initialize slides - MUST be called before any slide navigation
     function initializeSlides() {
+      if (slidesInitialized) return; // Prevent double initialization
+      
       slides = document.querySelectorAll('.slide');
       totalSlides = slides.length;
-      document.getElementById('totalSlides').textContent = totalSlides;
-      console.log('Initialized', totalSlides, 'slides');
+      slidesInitialized = true;
+      
+      console.log('=== SLIDE INITIALIZATION ===');
+      console.log('Found slides:', slides.length);
+      slides.forEach((slide, i) => {
+        console.log(`  Slide ${i+1}:`, slide.querySelector('h1')?.textContent, '- Active:', slide.classList.contains('active'));
+      });
+      
+      const totalSlidesEl = document.getElementById('totalSlides');
+      if (totalSlidesEl) {
+        totalSlidesEl.textContent = totalSlides;
+      }
+      
+      console.log('Slides initialized successfully. Total:', totalSlides);
+    }
+    
+    // Run initialization when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeSlides);
+    } else {
+      // DOM is already loaded
+      initializeSlides();
     }
 
     // Stats tracking
@@ -1882,6 +1703,16 @@
     }
 
     function showSlide(n) {
+      // Safety check: ensure slides are initialized
+      if (!slidesInitialized || !slides || slides.length === 0) {
+        console.error('Slides not initialized!');
+        initializeSlides();
+        if (!slides || slides.length === 0) {
+          console.error('Still no slides found!');
+          return;
+        }
+      }
+      
       // Check if trying to access slide 3 (questions) without sign-in
       if (n === 2 && !isSignedIn) {
         alert('⚠️ Please sign in first to ask questions!');
@@ -2113,9 +1944,6 @@
             updateStats(subject);
             addToHistory(subject, question || 'Image question', data.data.solution, data.data.explanation, !!uploadedImage);
             lastQuestion = currentQuestion;
-            
-            // Earn 10 coins for solving a problem!
-            earnCoins(10);
           }
         } else {
           solutionEl.textContent = '❌ Error';
