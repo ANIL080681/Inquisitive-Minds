@@ -1010,6 +1010,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       updateCoinsDisplay();
       applyTheme(currentTheme);
+      // Initialize slides after DOM is ready
+      initializeSlides();
     });
     
     // Also run immediately in case DOM is already loaded
@@ -1019,13 +1021,22 @@
     } else {
       // DOM is ready
       applyTheme(currentTheme);
+      initializeSlides();
     }
 
     
     let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
+    let slides;
+    let totalSlides;
     let isSignedIn = localStorage.getItem('isSignedIn') === 'true';
+    
+    // Initialize slides
+    function initializeSlides() {
+      slides = document.querySelectorAll('.slide');
+      totalSlides = slides.length;
+      document.getElementById('totalSlides').textContent = totalSlides;
+      console.log('Initialized', totalSlides, 'slides');
+    }
 
     // Stats tracking
     let stats = JSON.parse(localStorage.getItem('homeworkStats')) || {
@@ -1133,8 +1144,6 @@
         { question: "How many bones are in the adult human body?", answer: "206" }
       ]
     };
-
-    document.getElementById('totalSlides').textContent = totalSlides;
     
     // Load stats on page load
     function loadStats() {
