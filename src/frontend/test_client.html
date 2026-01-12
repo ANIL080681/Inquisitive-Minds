@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Homework Assistant — Quick Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f6fb; color:#222; padding:24px }
+    .card { max-width:800px; margin:24px auto; background:white; padding:20px; border-radius:8px; box-shadow:0 6px 18px rgba(20,30,60,0.08)}
+    textarea{width:100%;min-height:120px;padding:10px;border-radius:6px;border:1px solid #ddd}
+    select,input,button{padding:10px;border-radius:6px;border:1px solid #ddd}
+    .row{display:flex;gap:12px;align-items:center}
+    .result{white-space:pre-wrap;background:#fbfbff;border-left:4px solid #007bff;padding:12px;margin-top:12px;border-radius:6px}
+    .explain{background:#fffaf0;border-left:4px solid #ff9800;padding:12px;margin-top:8px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Quick Test — Homework Assistant</h2>
+    <p>Enter a problem and pick a subject, then click <strong>Get Solution</strong>.</p>
+
+    <div style="margin:12px 0">
+      <label for="subject">Subject:</label>
+      <select id="subject">
+        <option value="math">Math</option>
+        <option value="english">English</option>
+        <option value="science">Science</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="problem">Problem / Question:</label>
+      <textarea id="problem" placeholder="e.g. 2x + 3 = 7 or Explain photosynthesis..."></textarea>
+    </div>
+
+    <div style="margin-top:12px" class="row">
+      <button id="solveBtn">Get Solution</button>
+      <button id="exampleBtn">Insert Example</button>
+      <span id="status" style="color:#666;margin-left:8px"></span>
+    </div>
+
+    <div id="output" style="margin-top:18px"></div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api/solve';
+    const solveBtn = document.getElementById('solveBtn');
+    const exampleBtn = document.getElementById('exampleBtn');
+    const problemEl = document.getElementById('problem');
+    const subjectEl = document.getElementById('subject');
+    const statusEl = document.getElementById('status');
+    const outputEl = document.getElementById('output');
+
+    exampleBtn.addEventListener('click', () => {
+      const subj = subjectEl.value;
+      if (subj === 'math') problemEl.value = '2x + 3 = 7';
+      if (subj === 'english') problemEl.value = "Correct: its a sentence vs it's a sentence";
+      if (subj === 'science') problemEl.value = 'photosynthesis';
+    });
+
+    solveBtn.addEventListener('click', async () => {
+      outputEl.innerHTML = '';
+      statusEl.textContent = 'Solving...';
+      const payload = { problem: problemEl.value, subject: subjectEl.value };
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Request failed');
+        }
+
+        const data = await res.json();
+        const r = data.data;
+
+        outputEl.innerHTML = `\n          <div class="result">\n            <strong>Solution:</strong> <div>${escapeHtml(r.solution)}</div>\n          </div>\n          <div class="explain">\n            <strong>Explanation:</strong> <div>${escapeHtml(r.explanation)}</div>\n          </div>\n          <div style="margin-top:8px;color:#666">Confidence: ${r.confidence ? Math.round(r.confidence*100) + '%' : 'N/A'}</div>
+        `;
+        statusEl.textContent = '';
+      } catch (err) {
+        statusEl.textContent = '';
+        outputEl.innerHTML = `<div style="color:#b00020">Error: ${escapeHtml(err.message || String(err))}</div>`;
+      }
+    });
+
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>') }
+  </script>
+</body>
+</html>
