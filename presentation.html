@@ -1392,8 +1392,32 @@
         return;
       }
       
-      // Display user's answer on the back
-      document.getElementById('user-answer-text').textContent = userAnswer;
+      // Get current card's correct answer
+      const currentCard = filteredFlashcards[currentFlashcardIndex];
+      const correctAnswer = currentCard ? currentCard.answer : '';
+      
+      // Normalize answers for comparison (case-insensitive, remove extra spaces)
+      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, ' ').trim();
+      const normalizedCorrectAnswer = correctAnswer.toLowerCase().replace(/\s+/g, ' ').trim();
+      
+      // Check if answer is correct
+      const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+      
+      // Display user's answer on the back with correctness indicator
+      const userAnswerDisplay = document.getElementById('user-answer-text');
+      userAnswerDisplay.textContent = userAnswer;
+      
+      // Add visual feedback
+      const userAnswerContainer = document.getElementById('user-answer-display');
+      if (isCorrect) {
+        userAnswerContainer.style.background = 'rgba(34, 197, 94, 0.3)';
+        userAnswerContainer.style.border = '2px solid #22c55e';
+        userAnswerDisplay.innerHTML = '✅ ' + userAnswer + ' - Correct!';
+      } else {
+        userAnswerContainer.style.background = 'rgba(239, 68, 68, 0.3)';
+        userAnswerContainer.style.border = '2px solid #ef4444';
+        userAnswerDisplay.innerHTML = '❌ ' + userAnswer + ' - Incorrect';
+      }
       
       // Flip the card
       flipCard();
@@ -1407,6 +1431,11 @@
         card.style.transform = 'rotateY(180deg)';
       } else {
         card.style.transform = 'rotateY(0deg)';
+        // Reset user answer input and feedback when flipping back
+        document.getElementById('card-answer-input').value = '';
+        const userAnswerContainer = document.getElementById('user-answer-display');
+        userAnswerContainer.style.background = 'rgba(255, 255, 255, 0.2)';
+        userAnswerContainer.style.border = 'none';
       }
     }
     
