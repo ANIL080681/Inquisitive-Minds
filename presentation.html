@@ -476,6 +476,7 @@
             <div style="font-size: 1.5em; margin-bottom: 5px;">🎯</div>
             <div style="font-size: 1.3em; font-weight: bold;" id="rank-level">Beginner</div>
             <div style="font-size: 0.85em; margin-top: 3px;">Rank</div>
+            <div style="font-size: 0.7em; margin-top: 5px; opacity: 0.8;" id="rank-progress">10 more to Novice</div>
           </div>
         </div>
       </div>
@@ -876,6 +877,18 @@
       platinum: 250
     };
     
+    // Rank system based on total questions solved
+    const rankTiers = [
+      { name: 'Beginner', min: 0, max: 9, emoji: '🌱', color: 'rgba(150, 150, 150, 0.5)' },
+      { name: 'Novice', min: 10, max: 24, emoji: '⭐', color: 'rgba(255, 215, 0, 0.3)' },
+      { name: 'Apprentice', min: 25, max: 49, emoji: '🔥', color: 'rgba(255, 150, 50, 0.3)' },
+      { name: 'Scholar', min: 50, max: 99, emoji: '📚', color: 'rgba(100, 200, 255, 0.3)' },
+      { name: 'Expert', min: 100, max: 199, emoji: '🎓', color: 'rgba(150, 100, 255, 0.3)' },
+      { name: 'Master', min: 200, max: 349, emoji: '💎', color: 'rgba(100, 255, 200, 0.3)' },
+      { name: 'Grandmaster', min: 350, max: 499, emoji: '👑', color: 'rgba(255, 100, 150, 0.3)' },
+      { name: 'Legend', min: 500, max: Infinity, emoji: '🏆', color: 'rgba(255, 215, 0, 0.5)' }
+    ];
+    
     let unlockedBadges = JSON.parse(localStorage.getItem('unlockedBadges')) || [];
     
     // Question history
@@ -972,6 +985,42 @@
       document.getElementById('math-questions').textContent = stats.math;
       document.getElementById('english-questions').textContent = stats.english;
       document.getElementById('science-questions').textContent = stats.science;
+      updateRank();
+    }
+    
+    // Calculate and display user rank
+    function updateRank() {
+      const total = stats.total;
+      const currentRank = rankTiers.find(rank => total >= rank.min && total <= rank.max);
+      
+      if (currentRank) {
+        const rankEl = document.getElementById('rank-level');
+        const rankCard = rankEl.closest('div[style*="rgba(255, 150, 50"]');
+        
+        rankEl.textContent = currentRank.name;
+        
+        // Update rank card color
+        if (rankCard) {
+          rankCard.style.background = currentRank.color;
+          rankCard.style.borderColor = currentRank.color.replace('0.3', '0.6');
+          
+          // Update emoji
+          const emojiEl = rankCard.querySelector('div[style*="font-size: 1.5em"]');
+          if (emojiEl) {
+            emojiEl.textContent = currentRank.emoji;
+          }
+        }
+        
+        // Show progress to next rank
+        const nextRank = rankTiers.find(rank => rank.min > total);
+        if (nextRank) {
+          const questionsNeeded = nextRank.min - total;
+          const progressText = document.getElementById('rank-progress');
+          if (progressText) {
+            progressText.textContent = `${questionsNeeded} more to ${nextRank.name}`;
+          }
+        }
+      }
     }
     
     // Load and display badges
@@ -1012,14 +1061,26 @@
     
     // Update stats after each question
     function updateStats(subject) {
+      const oldRank = rankTiers.find(rank => stats.total >= rank.min && stats.total <= rank.max);
+      
       stats.total++;
       if (subject === 'math') stats.math++;
       else if (subject === 'english') stats.english++;
       else if (subject === 'science') stats.science++;
       
       localStorage.setItem('homeworkStats', JSON.stringify(stats));
+      
+      const newRank = rankTiers.find(rank => stats.total >= rank.min && stats.total <= rank.max);
+      
       loadStats();
       checkBadges();
+      
+      // Check for rank up
+      if (oldRank && newRank && oldRank.name !== newRank.name) {
+        setTimeout(() => {
+          alert(`🎉 RANK UP! You are now ${newRank.emoji} ${newRank.name}!`);
+        }, 800);
+      }
     }
     
     loadStats();
