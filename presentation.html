@@ -1394,7 +1394,7 @@
       
       // Get current card's correct answer
       const currentCard = filteredFlashcards[currentFlashcardIndex];
-      const correctAnswer = currentCard ? currentCard.answer : '';
+      const correctAnswer = currentCard ? currentCard.solution : '';
       
       // Normalize answers for comparison (case-insensitive, remove extra spaces)
       const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, ' ').trim();
