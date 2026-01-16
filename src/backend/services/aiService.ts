@@ -19,7 +19,27 @@ export class AIService {
     }
 
     try {
-      const prompt = `You are a helpful homework tutor for grade ${grade} students.
+      let prompt = '';
+      
+      if (subject.toLowerCase() === 'math') {
+        prompt = `You are an expert mathematics tutor helping grade ${grade} students solve problems.
+
+Question: ${problem}
+
+Instructions:
+- Solve this math problem completely, showing ALL work
+- For equations: Show each algebraic step clearly
+- For calculus: Show derivative/integral steps
+- For word problems: Set up the equation first
+- Use proper mathematical notation
+- Break down complex steps into simple ones
+- Double-check your final answer
+
+Format your response as:
+SOLUTION: [final numeric answer or simplified form]
+EXPLANATION: [complete step-by-step solution with all work shown]`;
+      } else {
+        prompt = `You are a helpful homework tutor for grade ${grade} students.
 Subject: ${subject}
 Question: ${problem}
 
@@ -30,6 +50,7 @@ Provide:
 Format your response as:
 SOLUTION: [your answer here]
 EXPLANATION: [your detailed explanation here]`;
+      }
 
       const postData = JSON.stringify({
         contents: [{
