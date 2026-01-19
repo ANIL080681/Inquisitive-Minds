@@ -1396,12 +1396,18 @@
       const currentCard = filteredFlashcards[currentFlashcardIndex];
       const correctAnswer = currentCard ? currentCard.solution : '';
       
-      // Normalize answers for comparison (case-insensitive, remove extra spaces)
-      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, ' ').trim();
-      const normalizedCorrectAnswer = correctAnswer.toLowerCase().replace(/\s+/g, ' ').trim();
+      // Normalize answers for comparison (case-insensitive, remove extra spaces and punctuation)
+      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ').trim();
+      const normalizedCorrectAnswer = correctAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ').trim();
       
-      // Check if answer is correct
-      const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+      // Check if answer is correct (exact match or contained in solution)
+      const isExactMatch = normalizedUserAnswer === normalizedCorrectAnswer;
+      const isContained = normalizedCorrectAnswer.includes(normalizedUserAnswer) || normalizedUserAnswer.includes(normalizedCorrectAnswer);
+      const isCorrect = isExactMatch || (isContained && normalizedUserAnswer.length > 2);
+      
+      console.log('User Answer:', normalizedUserAnswer);
+      console.log('Correct Answer:', normalizedCorrectAnswer);
+      console.log('Is Correct:', isCorrect);
       
       // Change card back background based on correctness
       const cardBack = document.getElementById('card-back');
