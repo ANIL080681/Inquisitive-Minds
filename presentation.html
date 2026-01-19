@@ -1396,17 +1396,28 @@
       const currentCard = filteredFlashcards[currentFlashcardIndex];
       const correctAnswer = currentCard ? currentCard.solution : '';
       
-      // Normalize answers for comparison (case-insensitive, remove extra spaces and punctuation)
-      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ').trim();
-      const normalizedCorrectAnswer = correctAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ').trim();
+      // Extract just the answer part (before any explanation)
+      const answerPart = correctAnswer.split(/[.\n]/)[0].trim(); // Get first sentence/line
       
-      // Check if answer is correct (exact match or contained in solution)
+      // Normalize answers for comparison (case-insensitive, remove extra spaces and punctuation)
+      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, '').trim();
+      const normalizedCorrectAnswer = correctAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, '').trim();
+      const normalizedAnswerPart = answerPart.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, '').trim();
+      
+      // Check multiple conditions for correctness
       const isExactMatch = normalizedUserAnswer === normalizedCorrectAnswer;
-      const isContained = normalizedCorrectAnswer.includes(normalizedUserAnswer) || normalizedUserAnswer.includes(normalizedCorrectAnswer);
-      const isCorrect = isExactMatch || (isContained && normalizedUserAnswer.length > 2);
+      const matchesAnswerPart = normalizedUserAnswer === normalizedAnswerPart;
+      const containsUserAnswer = normalizedCorrectAnswer.includes(normalizedUserAnswer) && normalizedUserAnswer.length > 1;
+      const containsInAnswerPart = normalizedAnswerPart.includes(normalizedUserAnswer) && normalizedUserAnswer.length > 1;
+      
+      // Also check if user answer without variable equals the answer (e.g., "8" matches "x=8")
+      const numericMatch = normalizedAnswerPart.replace(/[a-z]/g, '') === normalizedUserAnswer;
+      
+      const isCorrect = isExactMatch || matchesAnswerPart || containsUserAnswer || containsInAnswerPart || numericMatch;
       
       console.log('User Answer:', normalizedUserAnswer);
-      console.log('Correct Answer:', normalizedCorrectAnswer);
+      console.log('Full Correct Answer:', normalizedCorrectAnswer);
+      console.log('Answer Part:', normalizedAnswerPart);
       console.log('Is Correct:', isCorrect);
       
       // Change card back background based on correctness
