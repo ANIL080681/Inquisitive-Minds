@@ -1315,7 +1315,7 @@
       const history = JSON.parse(localStorage.getItem('questionHistory')) || [];
       
       // Filter out invalid flashcards (error messages, no AI key, etc.)
-      const validHistory = history.filter(item => {
+      let validHistory = history.filter(item => {
         const solution = item.solution || '';
         const isInvalid = 
           solution.includes('AI service not configured') ||
@@ -1328,12 +1328,27 @@
         return !isInvalid;
       });
       
+      // Remove duplicates - keep only the most recent version of each question
+      const uniqueQuestions = new Map();
+      validHistory.forEach(item => {
+        const normalizedQuestion = item.question.toLowerCase().trim();
+        if (!uniqueQuestions.has(normalizedQuestion) || 
+            item.timestamp > uniqueQuestions.get(normalizedQuestion).timestamp) {
+          uniqueQuestions.set(normalizedQuestion, item);
+        }
+      });
+      
+      validHistory = Array.from(uniqueQuestions.values());
+      
+      // Sort by timestamp (most recent first)
+      validHistory.sort((a, b) => b.timestamp - a.timestamp);
+      
       if (validHistory.length === 0) {
         alert('No valid flashcards yet! Ask some questions with AI enabled to create flashcards.');
         return;
       }
       
-      // Update localStorage with only valid flashcards
+      // Update localStorage with cleaned flashcards
       localStorage.setItem('questionHistory', JSON.stringify(validHistory));
       
       currentFlashcardFilter = 'all';
