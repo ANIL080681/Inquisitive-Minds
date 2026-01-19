@@ -1313,10 +1313,28 @@
     // Flashcard functions
     function openFlashcards() {
       const history = JSON.parse(localStorage.getItem('questionHistory')) || [];
-      if (history.length === 0) {
-        alert('No questions in history yet! Ask some questions first to create flashcards.');
+      
+      // Filter out invalid flashcards (error messages, no AI key, etc.)
+      const validHistory = history.filter(item => {
+        const solution = item.solution || '';
+        const isInvalid = 
+          solution.includes('AI service not configured') ||
+          solution.includes('Unable to solve') ||
+          solution.includes('not configured') ||
+          solution.includes('Please add your') ||
+          solution.includes('API key') ||
+          solution === 'Error' ||
+          solution.trim() === '';
+        return !isInvalid;
+      });
+      
+      if (validHistory.length === 0) {
+        alert('No valid flashcards yet! Ask some questions with AI enabled to create flashcards.');
         return;
       }
+      
+      // Update localStorage with only valid flashcards
+      localStorage.setItem('questionHistory', JSON.stringify(validHistory));
       
       currentFlashcardFilter = 'all';
       filterFlashcards('all');
