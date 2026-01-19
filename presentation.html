@@ -1810,14 +1810,30 @@
     
     // Add question to history
     function addToHistory(subject, question, solution, explanation, hasImage) {
-      questionHistory.unshift({
-        subject: subject,
-        question: question,
-        solution: solution,
-        explanation: explanation,
-        timestamp: Date.now(),
-        hasImage: hasImage || false
-      });
+      // Check if this exact question already exists
+      const existingQuestion = questionHistory.find(item => 
+        item.question.toLowerCase().trim() === question.toLowerCase().trim()
+      );
+      
+      if (existingQuestion) {
+        // Update existing question instead of adding duplicate
+        existingQuestion.solution = solution;
+        existingQuestion.explanation = explanation;
+        existingQuestion.timestamp = Date.now();
+        existingQuestion.hasImage = hasImage || false;
+        console.log('Updated existing question in history');
+      } else {
+        // Add new question
+        questionHistory.unshift({
+          subject: subject,
+          question: question,
+          solution: solution,
+          explanation: explanation,
+          timestamp: Date.now(),
+          hasImage: hasImage || false
+        });
+        console.log('Added new question to history');
+      }
       
       // Keep only last 100 questions
       if (questionHistory.length > 100) {
