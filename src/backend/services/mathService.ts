@@ -14,6 +14,10 @@ export class MathService {
     normalized = normalized.replace(/\bcubed\b/g, '^3');
     // Remove common question words
     normalized = normalized.replace(/^(what is|calculate|solve|find|explain)\s+/i, '');
+    // Insert * for implicit multiplication (e.g., 9(9+9) => 9*(9+9), (2+3)(4+5) => (2+3)*(4+5))
+    normalized = normalized.replace(/(\d)\s*\(/g, '$1*(');
+    normalized = normalized.replace(/\)\s*(\d)/g, ')*$1');
+    normalized = normalized.replace(/\)\s*\(/g, ')*(');
     return normalized.trim();
   }
 
@@ -229,7 +233,7 @@ Step 2: Divide by ${a}: x = ${x}`;
       return { solution, explanation, subject: 'math', confidence: 0.95 };
     }
 
-    // Complex expressions: (5 + 3) * 2
+    // Complex expressions: (5 + 3) * 2, 9(9+9), etc.
     const complexMatch = normalized.match(/^[\d\s+\-*\/()^.]+$/);
     if (complexMatch) {
       const result = this.evaluateExpression(normalized);
@@ -307,4 +311,3 @@ ${normalized} = ${result}`;
       confidence: 0.9,
     };
   }
-}
