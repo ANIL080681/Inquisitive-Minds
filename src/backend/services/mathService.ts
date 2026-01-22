@@ -14,10 +14,11 @@ export class MathService {
     normalized = normalized.replace(/\bcubed\b/g, '^3');
     // Remove common question words
     normalized = normalized.replace(/^(what is|calculate|solve|find|explain)\s+/i, '');
-    // Insert * for implicit multiplication (e.g., 9(9+9) => 9*(9+9), (2+3)(4+5) => (2+3)*(4+5))
-    normalized = normalized.replace(/(\d)\s*\(/g, '$1*(');
-    normalized = normalized.replace(/\)\s*(\d)/g, ')*$1');
-    normalized = normalized.replace(/\)\s*\(/g, ')*(');
+    // Insert * for implicit multiplication (robust):
+    // number or variable before (
+    normalized = normalized.replace(/([\da-zA-Z])\s*\(/g, '$1*(');
+    // ) before number, variable, or (
+    normalized = normalized.replace(/\)\s*([\da-zA-Z(])/g, ')*$1');
     return normalized.trim();
   }
 
@@ -47,6 +48,16 @@ export class MathService {
     const normalized = this.normalizeInput(problem);
     let solution = '';
     let explanation = '';
+
+    // Always try to evaluate normalized expression first if it contains numbers and parentheses
+    if (/^[\d\s+\-*\/().^]+$/.test(normalized) && normalized.includes('(')) {
+      const result = this.evaluateExpression(normalized);
+      if (!isNaN(result)) {
+        solution = result.toString();
+        explanation = `Following order of operations (PEMDAS):\n${normalized} = ${result}`;
+        return { solution, explanation, subject: 'math', confidence: 0.95 };
+      }
+    }
 
     // Square root: √16, square root of 16
     const sqrtMatch = normalized.match(/(?:square root of|sqrt|√)\s*(\d+\.?\d*)/i);
@@ -233,7 +244,7 @@ Step 2: Divide by ${a}: x = ${x}`;
       return { solution, explanation, subject: 'math', confidence: 0.95 };
     }
 
-    // Complex expressions: (5 + 3) * 2, 9(9+9), etc.
+    // Complex expressions: (5 + 3) * 2
     const complexMatch = normalized.match(/^[\d\s+\-*\/()^.]+$/);
     if (complexMatch) {
       const result = this.evaluateExpression(normalized);
