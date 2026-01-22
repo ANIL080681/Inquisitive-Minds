@@ -49,16 +49,6 @@ export class MathService {
     let solution = '';
     let explanation = '';
 
-    // Always try to evaluate normalized expression first if it contains numbers and parentheses
-    if (/^[\d\s+\-*\/().^]+$/.test(normalized) && normalized.includes('(')) {
-      const result = this.evaluateExpression(normalized);
-      if (!isNaN(result)) {
-        solution = result.toString();
-        explanation = `Following order of operations (PEMDAS):\n${normalized} = ${result}`;
-        return { solution, explanation, subject: 'math', confidence: 0.95 };
-      }
-    }
-
     // Square root: √16, square root of 16
     const sqrtMatch = normalized.match(/(?:square root of|sqrt|√)\s*(\d+\.?\d*)/i);
     if (sqrtMatch) {
@@ -244,14 +234,12 @@ Step 2: Divide by ${a}: x = ${x}`;
       return { solution, explanation, subject: 'math', confidence: 0.95 };
     }
 
-    // Complex expressions: (5 + 3) * 2
-    const complexMatch = normalized.match(/^[\d\s+\-*\/()^.]+$/);
-    if (complexMatch) {
+    // Fallback: Always try to evaluate as a math expression
+    if (/^[\d\s+\-*\/()^.]+$/.test(normalized)) {
       const result = this.evaluateExpression(normalized);
       if (!isNaN(result)) {
         solution = result.toString();
-        explanation = `Following order of operations (PEMDAS):
-${normalized} = ${result}`;
+        explanation = `Following order of operations (PEMDAS):\n${normalized} = ${result}`;
         return { solution, explanation, subject: 'math', confidence: 0.88 };
       }
     }
